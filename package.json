@@ -1,0 +1,27 @@
+{
+  "name": "twys-api",
+  "version": "1.0.0",
+  "description": "",
+  "main": "./appjs",
+  "scripts": {
+    "test": "jest",
+    "start": "node server.js"
+  },
+  "author": "Damar Nur Ichwan",
+  "license": "ISC",
+  "dependencies": {
+    "axios": "0.25.0",
+    "chai": "4.3.6",
+    "chai-http": "4.3.0",
+    "data-model": "0.0.2",
+    "dotenv": "14.3.2",
+    "express": "4.17.2",
+    "express-jwt": "^7.7.0",
+    "firebase-admin": "^10.2.0",
+    "jest": "^28.1.0",
+    "jsonwebtoken": "8.5.1",
+    "npm": "^8.7.0",
+    "timestamp-to-date": "1.1.0",
+    "winston": "3.7.2"
+  }
+}
