@@ -3,6 +3,7 @@ const { firebase, logger, time, timestamp2date } = require('../../../../utils/ut
 const configs = require('../../../../configs')
 const model = require('./register-verify.model')
 const db = firebase.firestore()
+const dbReal = firebase.realtime
 
 // Variables
 const layer = 'access'
@@ -23,38 +24,30 @@ const getTime = async () => {
 
 
 /******************* GET OTP: retrieve existing otp *******************/
-const getOTP = async (otp = 0) => {
+const getOTP = async (otp = '') => {
 
     // Variable
     const collection = 'otp'
     const document = 'register'
-    const { date } = await getTime()
 
     // Try
     try{
 
         // Get otp
-        let response = await db.collection(collection).doc(document).collection(date).where('otp','==',otp).get()
-        response = response.docs.map(doc=>doc.data())
+        let response = await dbReal.ref(`${collection}/${document}/${otp}`).once('value')
+        response = response.val()
         
         // If otp not exist, return
-        if (!response.length){
+        if (!response){
             logger.warn({ layer, message: `OTP not exist` })
             return false
         }
-
+        
         // If otp exist, delete
-        const batch = db.batch()
-        db.collection(collection).doc(document).collection(date).where('otp','==',otp).get()
-        .then((snapshot) => {
-            snapshot.forEach((doc) => {
-                batch.delete(doc.ref);
-            });
-            batch.commit()
-        });
+        await dbReal.ref(`${collection}/${document}/${otp}`).remove()
 
         // Return response
-        return response[0]
+        return response
     }
     
     // Catch
@@ -106,7 +99,6 @@ const sendEmail = async (requested = 0, to = '', subject = '', text = '' ) => {
     //Variables
     const collection = 'email'
     const document = 'queue'
-    const date = timestamp2date(requested)
     const path = `${featurePath}-${collection}-${document}`
 
     // Data validation
@@ -122,8 +114,10 @@ const sendEmail = async (requested = 0, to = '', subject = '', text = '' ) => {
 
     //push Email
     try{
-        await db.collection(collection).doc(document).collection(date)
-        .add({ requested, to, subject, text })
+        
+        // Add data to Email Queue
+        await dbReal.ref(`${collection}/${document}/${requested}`)
+        .set({ requested, to, subject, text })
 
         //return
         return true

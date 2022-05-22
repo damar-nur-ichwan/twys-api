@@ -3,7 +3,7 @@ const configs = require('../../../../configs')
 const featurePath = configs.path.user.change.verify
 
 /******************* CONTROLLER *******************/
-model(featurePath).setTemplate(Number)
+model(featurePath).setTemplate(String)
 
 /******************* ACCESS *******************/
 model(`${featurePath}-email-queue`).setTemplate({

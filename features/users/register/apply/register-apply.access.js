@@ -1,6 +1,7 @@
 // Libraries
-const { firebase, logger, time, timestamp2date } = require('../../../../utils/utils')
+const { firebase, logger, time, timestamp2date, otp } = require('../../../../utils/utils')
 const db = firebase.firestore()
+const dbReal = firebase.realtime
 const model = require('./register-apply.model')
 const configs = require('../../../../configs')
 
@@ -75,30 +76,16 @@ const addOtpRegister = async (requested = 0, email = '', password = '', role = '
     // Variables
     const collection = 'otp'
     const document = 'register'
-    const path = `${featurePath}-${collection}-${document}`
-    const date = timestamp2date(requested)
 
-    // Input validation
-    const validation = model(path).validate({ requested, email, password, role, otp})
+    // Try
+    try{ 
+        
+        // Add or update OTP Forgot
+        await dbReal.ref(`${collection}/${document}/${otp}`).set({ requested, email, password, role, otp })
 
-    // If Input is invalid
-    if(!validation){
-
-        // Return false
-        logger.warn({ layer, message: 'The data entered is invalid'})
-        return false
-    }
-
-    // Try 
-    try{
-
-        // Add or update OTP Register 
-        await db.collection(collection).doc(document).collection(date).doc(email)
-        .set({ requested, email, password, role, otp })
-
-        // Return
+        // Return true
         return true
-    } 
+    }
     
     // Catch
     catch (err){
@@ -116,7 +103,6 @@ const sendEmail = async (requested = 0, to = '', subject = '', text = '') => {
     // Variables
     const collection = 'email'
     const document = 'queue'
-    const date = timestamp2date(requested)
     const path = `${featurePath}-${collection}-${document}`
 
     // Input validation
@@ -134,8 +120,8 @@ const sendEmail = async (requested = 0, to = '', subject = '', text = '') => {
     try{
 
         // Add data to Email Queue
-        await db.collection(collection).doc(document).collection(date)
-        .add({ requested, to, subject, text })
+        await dbReal.ref(`${collection}/${document}/${requested}`)
+        .set({ requested, to, subject, text })
     
         // Return true
         return true
@@ -151,41 +137,44 @@ const sendEmail = async (requested = 0, to = '', subject = '', text = '') => {
 }
 
 
+/******************* DELETE EXPIRED OTP: to delete expired otp *******************/
+const liveLimit = 2 * 60 * 1000
 setInterval( async () => {
 
     // Variables
     const collection = 'otp'
     const document = 'register'
-    const liveLimit = 2 * 60 * 1000
+    
     // Get Date
-    const { date, timestamp } = await getTime()
+    const { timestamp } = await getTime()
+
+    // Expired OTP
+    const OTP = otp.generate(timestamp - liveLimit)
 
     // Try
     try{
 
-        // Delete expired OTP
-        const batch = db.batch()
-        db.collection(collection).doc(document).collection(date).where('requested','<', timestamp - liveLimit).get()
-        .then((snapshot) => {
-            snapshot.forEach((doc) => {
-                batch.delete(doc.ref);
-            });
-            batch.commit()
-        });
+        // Expired OTP
+        let expOTP = await dbReal.ref(`${collection}/${document}`).orderByKey().endAt(`${OTP}`).once('value')
+        expOTP = expOTP.val() ? Object.keys(expOTP.val()) : [];
+        // Delete
+        expOTP.map(async(otp)=>{
+            await dbReal.ref(`${collection}/${document}/${otp}`).remove()
+        })
 
         // Return true
         return true
-    } 
+    }
     
     // Catch
     catch (err){
-
+        
         // Return false
         logger.error({ layer, message: err})
         return false
     }
+}, liveLimit)
 
-}, 1000 * 60 * 2)
 
 
 module.exports = {

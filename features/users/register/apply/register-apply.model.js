@@ -17,7 +17,7 @@ model(`${featurePath}-otp-register`).setTemplate({
     email: String,
     password: String,
     role: String,
-    otp: Number
+    otp: String
 })
 
 model(`${featurePath}-email-queue`).setTemplate({

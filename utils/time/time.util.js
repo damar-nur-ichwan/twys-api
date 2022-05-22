@@ -20,7 +20,7 @@ async function time(url=''){
         return output
 
     } catch (err){
-        time(url)
+        await time(url)
     }
 }
 
