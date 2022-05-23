@@ -1,6 +1,7 @@
 // Libraries
 const { firebase, logger, time, timestamp2date } = require('../../../utils/utils')
 const db = firebase.firestore()
+const dbReal = firebase.realtime
 const model = require('./login.model')
 const configs = require('../../../configs')
 
@@ -89,7 +90,6 @@ const sendEmail = async (requested = 0, to = '', subject = '', text = '') => {
     // Variables
     const collection = 'email'
     const document = 'queue'
-    const date = timestamp2date(requested)
     const path = `${featurePath}-${collection}-${document}`
 
     // Input validation
@@ -103,10 +103,11 @@ const sendEmail = async (requested = 0, to = '', subject = '', text = '') => {
         return false
     }
 
-    // Add data to Email Queue
     try{
-        await db.collection(collection).doc(document).collection(date)
-        .add({ requested, to, subject, text })
+
+        // Add data to Email Queue
+        await dbReal.ref(`${collection}/${document}/${requested}`)
+        .set({ requested, to, subject, text })
     
         // Return true
         return true

@@ -10,18 +10,17 @@ const setAllTechnical = async (input = {}) => {
 
     // Variables
     const collection = 'technical'
-    let data = {}
     
     // Try
     try{
-        input.map((doc) => { 
-            data[doc.code] = doc
+        Object.values(input).map(async (doc) => { 
+            // Set
+            const timestamp = Object.keys(doc.data)
+            const value = doc.data[timestamp]
+            await db.ref(`${collection}/${doc.code}/data/${timestamp}`).set(value)
         })
-
-        // Set Group
-        await db.ref(collection).set(data)
         return true
-    } 
+    }
     
     // Catch
     catch (err){
