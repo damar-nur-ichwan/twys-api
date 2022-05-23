@@ -15,9 +15,13 @@ const setAllTechnical = async (input = {}) => {
     try{
         Object.values(input).map(async (doc) => { 
             // Set
-            const timestamp = Object.keys(doc.data)
+            const timestamp = Object.keys(doc.data)[0]
             const value = doc.data[timestamp]
-            await db.ref(`${collection}/${doc.code}/data/${timestamp}`).set(value)
+            try{
+                await db.ref(`${collection}/${doc.code}/data/${timestamp}`).set(value)
+            } catch(err){
+                console.log(err)
+            }
         })
         return true
     }

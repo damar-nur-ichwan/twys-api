@@ -16,7 +16,7 @@ const getAllUrl = async () => {
 
         // Get user
         let snapshot = await db.ref(collection).once('value')
-        snapshot = snapshot.val()
+        snapshot = snapshot.val() ? Object.values(snapshot.val()) : [];
 
         // Return
         return snapshot

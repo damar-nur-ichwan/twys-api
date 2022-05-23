@@ -16,20 +16,16 @@ const setAllDividend = async (input = {}) => {
     try{
         // Get All Financials
         let financials = await db.ref(collection).once('value')
-        financials = financials.val()
+        financials = financials.val() || {}
 
         // Insert Value
-        if(!financials){
-            financials = {}
-            input.map((doc) => { 
+        input.map((doc) => {
+            if(financials[doc.code]) financials[doc.code][sub] = doc[sub]
+            if(!financials[doc.code]) {
                 financials[doc.code] = doc
-            })
-        } else {
-            input.map((doc) => { 
-                financials[doc.code][sub] = doc[sub]
-            })
-        }
-
+            }
+        })
+        
         // Set Group
         await db.ref(collection).set(financials)
         return true
