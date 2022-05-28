@@ -1,12 +1,12 @@
 // Libraries
 const { status } = require("../../../../configs");
-const { setAllHistory } = require("./history-set.access");
+const { setSentEmail } = require("./email-set.access");
 
 // Service logic
-const service = async (history =[]) => {
+const service = async (emails =[]) => {
 
     // Set Data
-    const set = await setAllHistory(history)
+    const set = await setSentEmail(emails)
 
     // If Failed, return
     if(!set) {
@@ -19,7 +19,7 @@ const service = async (history =[]) => {
     // Return
     return {
         status: 200,
-        message: "History updated"
+        message: "Sent email updated"
     }
 }
 

@@ -3,7 +3,7 @@ const { status } = require("../../../../configs");
 const { setAllOverview } = require("./overview-set.access");
 
 // Service logic
-const service = async (overview ={}) => {
+const service = async (overview =[]) => {
 
     // Set Data
     const set = await setAllOverview(overview)

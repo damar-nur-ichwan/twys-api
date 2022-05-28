@@ -43,7 +43,8 @@ module.exports = {
             history: "/api/data/history",
             overview: "/api/data/overview",
             about: "/api/data/about",
-            url: "/api/data/url"
+            url: "/api/data/url",
+            email: "/api/data/email"
         }
     },
     status: {

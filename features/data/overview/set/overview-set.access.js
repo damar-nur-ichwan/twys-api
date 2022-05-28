@@ -6,20 +6,18 @@ const db = firebase.realtime
 const layer = 'access'
 
 /******************* SET ALL TECHNICAL: to get all technical data *******************/
-const setAllOverview = async (input = {}) => {
+const setAllOverview = async (input = []) => {
 
     // Variables
     const collection = 'overview'
-    let data = {}
     
     // Try
     try{
-        input.map((doc) => { 
-            data[doc.code] = doc
+        input.map(async ({code, data}) => { 
+            
+            // Set Group
+            await db.ref(`${collection}/${code}`).set({code, data})
         })
-
-        // Set Group
-        await db.ref(collection).set(data)
         return true
     } 
     

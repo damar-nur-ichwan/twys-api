@@ -6,17 +6,19 @@ const db = firebase.realtime
 const layer = 'access'
 
 /******************* SET ALL TECHNICAL: to get all technical data *******************/
-const setAllHistory = async (input = []) => {
+const setSentEmail = async (input = []) => {
 
     // Variables
-    const collection = 'history'
+    const collection1 = 'email/sent'
+    const collection2 = 'email/queue'
     
     // Try
     try{
-        input.map(async ({code, data}) => { 
+        input.map(async ({requested, to, subject, text}) => { 
 
             // Set Group
-            await db.ref(`${collection}/${code}`).set({code, data})
+            await db.ref(`${collection1}/${requested}`).set({requested, to, subject, text})
+            await db.ref(`${collection2}/${requested}`).remove()
         })
         return true
     } 
@@ -30,5 +32,5 @@ const setAllHistory = async (input = []) => {
 
 
 module.exports = {
-    setAllHistory
+    setSentEmail
 }

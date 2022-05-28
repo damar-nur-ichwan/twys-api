@@ -6,7 +6,7 @@ const db = firebase.realtime
 const layer = 'access'
 
 /******************* SET ALL TECHNICAL: to get all technical data *******************/
-const setAllTechnical = async (input = {}) => {
+const setAllTechnical = async (input = []) => {
 
     // Variables
     const collection = 'technical'

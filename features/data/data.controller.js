@@ -1,5 +1,6 @@
 const about = require('./about/about.controller')
 const dividend = require('./dividend/dividend.controller')
+const email = require('./email/email.controller')
 const financial = require('./financial/financial.controller')
 const history = require('./history/history.controller')
 const overview = require('./overview/overview.controller')
@@ -20,6 +21,7 @@ function data(app={}){
     overview(app)
     url(app)
     about(app)
+    email(app)
 }
 
 module.exports = data
