@@ -16,7 +16,7 @@ const setAllOverview = async (input = []) => {
         input.map(async ({code, data}) => { 
             
             // Set Group
-            await db.ref(`${collection}/${code}`).set({code, data})
+            if(data) await db.ref(`${collection}/${code}`).set(data)
         })
         return true
     } 

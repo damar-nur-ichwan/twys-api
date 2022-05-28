@@ -3,7 +3,7 @@ const { status } = require("../../../../configs");
 const { setAllProfile } = require("./profile-set.access");
 
 // Service logic
-const service = async (profile ={}) => {
+const service = async (profile =[]) => {
 
     // Set Data
     const set = await setAllProfile(profile)
