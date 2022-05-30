@@ -10,18 +10,14 @@ const setAllUrl = async (input = {}) => {
 
     // Variables
     const collection = 'url'
-    let data = {}
     
     // Try
     try{
         input.map((doc) => { 
-            data[doc.code] = doc
+            db.ref(`${collection}/${doc.code}`).set(doc)
         })
-
-        // Set Group
-        await db.ref(collection).set(data)
         return true
-    } 
+    }
     
     // Catch
     catch (err){
