@@ -14,6 +14,7 @@ const setTrueUrl = async (input = {}) => {
     // Try
     try{
         input.map((doc) => { 
+            db.ref(`technical/${doc.code}`).set({code: doc.code})
             db.ref(`${collection}/${doc.code}`).set(doc)
         })
         return true
@@ -33,7 +34,7 @@ const setFalseUrl = async (input = {}) => {
     
     // Try
     try{
-        input.map((doc) => { 
+        input.map((doc) => {
             db.ref(`${collection}-False/${doc.code}`).set(doc)
         })
         return true
