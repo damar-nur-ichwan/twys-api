@@ -1,12 +1,14 @@
 // Libraries
 const { status } = require("../../../../configs");
-const { setAllUrl } = require("./url-set.access");
+const { setTrueUrl, setFalseUrl } = require("./url-set.access");
 
 // Service logic
-const service = async (url ={}) => {
+const service = async (url ={}, bool = false) => {
 
     // Set Data
-    const set = await setAllUrl(url)
+    let set = false
+    if(bool) set = await setTrueUrl(url)
+    if(!bool) set = await setFalseUrl(url)
 
     // If Failed, return
     if(!set) {

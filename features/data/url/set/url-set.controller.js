@@ -16,7 +16,19 @@ const set = (app = {}) => {
         const { url } = req.body
 
         // Run service
-        const response = await service(url)
+        const response = await service(url, true)
+
+        // Send response
+        res.status(response.status).send(response.message)
+    })
+
+    app.post(featurePath+'/false', verifyToken, async (req,res) => {
+
+        // Variables
+        const { url } = req.body
+
+        // Run service
+        const response = await service(url,false)
 
         // Send response
         res.status(response.status).send(response.message)
